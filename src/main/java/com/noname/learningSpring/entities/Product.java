@@ -20,7 +20,8 @@ import javax.validation.constraints.NotNull;
 import java.io.Serializable;
 import java.math.BigDecimal;
 import java.sql.Blob;
-import java.sql.Date;
+import java.util.Date;
+
 
 @Entity
 @Table(name = "Products")

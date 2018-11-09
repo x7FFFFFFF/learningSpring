@@ -1,0 +1,23 @@
+<div class="header-container"
+     xmlns:th="http://www.thymeleaf.org"
+     xmlns:sec="http://www.thymeleaf.org/thymeleaf-extras-springsecurity4">
+
+    <div class="site-name">Online Shop</div>
+
+    <div class="header-bar">
+        <th:block sec:authorize="isAuthenticated()">
+            <div>
+                Logged in user: <span sec:authentication="name"/> <br/>
+                Roles: <span sec:authentication="principal.authorities"/><br/>
+            </div>
+            <div>
+                <a th:href="@{/admin/logout}">Logout</a>
+            </div>
+        </th:block>
+
+        <th:block sec:authorize="!isAuthenticated()">
+            <a th:href="@{/admin/login}">Login</a>
+        </th:block>
+    </div>
+
+</div>
