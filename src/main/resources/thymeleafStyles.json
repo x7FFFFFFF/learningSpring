@@ -1,0 +1,4 @@
+[
+    {"ids":["orderList"], "display":"hasAnyRole('ROLE_MANAGER','ROLE_EMPLOYEE')"},
+    {"ids":["product"], "display":"hasRole('ROLE_MANAGER')"}
+]
