@@ -41,6 +41,6 @@ public class DialectConfiguration {
         }
 
         System.out.println("rules = " + rules);
-        templateEngine.addDialect(new DisplayStylesDialect(expressionMap));
+        templateEngine.addDialect(new DisplayStylesDialect(expressionMap, expressionHandler));
     }
 }
