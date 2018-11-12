@@ -10,14 +10,15 @@
     <a th:href="@{/shoppingCart}">
         My Cart
     </a>
-    |
-    <th:block sec:authorize="hasAnyRole('ROLE_MANAGER','ROLE_EMPLOYEE')">
+    |<!--sec:authorize="hasAnyRole('ROLE_MANAGER','ROLE_EMPLOYEE')"-->
+    <th:block  id="orderList">
         <a th:href="@{/admin/orderList}">
             Order List
         </a>
         |
     </th:block>
-    <th:block sec:authorize="hasRole('ROLE_MANAGER')">
+    <!--sec:authorize="hasRole('ROLE_MANAGER')"-->
+    <th:block  id="product">
         <a th:href="@{/admin/product}">
             Create Product
         </a>
