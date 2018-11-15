@@ -1,16 +1,16 @@
 package com.noname.learningSpring.entities;
 
 import javax.persistence.*;
+import java.util.Collection;
 
 @Entity
 @Table(name = "Accounts")
 public class Account {
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
-    private long id;
+    private Long id;
 
-    public static final String ROLE_MANAGER = "MANAGER";
-    public static final String ROLE_EMPLOYEE = "EMPLOYEE";
+
 
     @Column(name = "User_Name", length = 20, nullable = false)
     private String userName;
@@ -21,24 +21,31 @@ public class Account {
     @Column(name = "Active", length = 1, nullable = false)
     private boolean active;
 
-    @Column(name = "User_Role", length = 20, nullable = false)
-    private String userRole;
+
+    @ManyToMany(fetch=FetchType.EAGER)
+    @JoinTable(
+            name = "users_roles",
+            joinColumns = @JoinColumn(
+                    name = "user_id", referencedColumnName = "id"),
+            inverseJoinColumns = @JoinColumn(
+                    name = "role_id", referencedColumnName = "id"))
+    private Collection<Role> roles;
 
     protected Account() {
     }
 
-    public Account(String userName, String encrytedPassword, boolean active, String userRole) {
+    public Account(String userName, String encrytedPassword, boolean active, String userRole, Collection<Role> roles) {
         this.userName = userName;
         this.encrytedPassword = encrytedPassword;
         this.active = active;
-        this.userRole = userRole;
+        this.roles = roles;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    public void setId(long id) {
+    public void setId(Long id) {
         this.id = id;
     }
 
@@ -66,12 +73,12 @@ public class Account {
         this.active = active;
     }
 
-    public String getUserRole() {
-        return userRole;
+    public Collection<Role> getRoles() {
+        return roles;
     }
 
-    public void setUserRole(String userRole) {
-        this.userRole = userRole;
+    public void setRoles(Collection<Role> roles) {
+        this.roles = roles;
     }
 
     @Override
@@ -81,7 +88,7 @@ public class Account {
                 ", userName='" + userName + '\'' +
                 ", encrytedPassword='" + encrytedPassword + '\'' +
                 ", active=" + active +
-                ", userRole='" + userRole + '\'' +
+                ", roles=" + roles +
                 '}';
     }
 }

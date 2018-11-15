@@ -55,7 +55,7 @@ public class CustomIdAttributeTagProcessor extends AbstractAttributeTagProcessor
         final String id = getId(context, attributeValue);
         if (expressionMap.containsKey(id)) {
             final Expression expr = expressionMap.get(id);
-            final EvaluationContext ctx = getEvaluationContext(context);
+            final EvaluationContext ctx = getEvaluationContext(context, id);
             if (! ExpressionUtils.evaluateAsBoolean(expr, ctx)) {
                 structureHandler.setBody("", false); // false == 'non-processable'
             }
@@ -65,7 +65,7 @@ public class CustomIdAttributeTagProcessor extends AbstractAttributeTagProcessor
 
     }
 
-    private EvaluationContext getEvaluationContext(ITemplateContext context) {
+    private EvaluationContext getEvaluationContext(ITemplateContext context, String id) {
         final Authentication authentication = AuthUtils.getAuthenticationObject(context);
         if (SpringVersionSpecificUtils.isWebFluxContext(context)){
             throw new UnsupportedOperationException("WebFlux");
@@ -77,7 +77,9 @@ public class CustomIdAttributeTagProcessor extends AbstractAttributeTagProcessor
             throw new UnsupportedOperationException();
         });
 
-        return expressionHandler.createEvaluationContext(authentication, filterInvocation);
+        final EvaluationContext evaluationContext = expressionHandler.createEvaluationContext(authentication, filterInvocation);
+        evaluationContext.setVariable("id", id);
+        return evaluationContext;
     }
 
     private String getId(ITemplateContext context, String attributeValue) {
