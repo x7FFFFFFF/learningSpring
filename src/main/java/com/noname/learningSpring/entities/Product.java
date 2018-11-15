@@ -50,18 +50,16 @@ public class Product implements Serializable {
     @CreationTimestamp
     private Date createdDate;
 
-    public Product(@NotNull String code, @NotNull String name, @NotNull BigDecimal price) {
-        this.code = code;
+    public Product(@NotNull String name, @NotNull BigDecimal price) {
         this.name = name;
         this.price = price;
     }
 
-    public String getCode() {
-        return code;
+    public Product() {
     }
 
-    public void setCode(String code) {
-        this.code = code;
+    public String getCode() {
+        return code;
     }
 
     public String getName() {
