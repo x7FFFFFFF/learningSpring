@@ -38,7 +38,7 @@ public class LearningSpringApplication {
                 createPrivilegeIfNotFound("GET /admin/accountInfo", privilegeRepository),
                 createPrivilegeIfNotFound("#orderList", privilegeRepository),
                 createPrivilegeIfNotFound("#product", privilegeRepository)
-                );
+        );
         final Role roleManager = createRoleIfNotFound("ROLE_MANAGER", managerPrivileges, roleRepository);
 
 
@@ -73,16 +73,17 @@ public class LearningSpringApplication {
         return roleOpt.get();
     }
 
-	private static void addProducts(ConfigurableApplicationContext context, int amount) {
-		final ProductRepository productRepository = context.getBean(ProductRepository.class);
-		Random random = new Random(System.currentTimeMillis());
-		for (int i = 0; i < amount; i++) {
-			Product product = new Product();
-			product.setName(product.toString());
-			product.setPrice(BigDecimal.valueOf(random.nextInt(10000) + 1));
-			productRepository.save(product);
-		}
-	}
+    private static void addProducts(ConfigurableApplicationContext context, int amount) {
+        final ProductRepository productRepository = context.getBean(ProductRepository.class);
+        Random random = new Random(System.currentTimeMillis());
+        for (int i = 0; i < amount; i++) {
+            Product product = new Product();
+            product.setName(product.toString());
+            product.setPrice(BigDecimal.valueOf(random.nextInt(10000) + 1));
+            product.setCode("code" + product.getPrice().intValue());
+            productRepository.save(product);
+        }
+    }
 
 }
 

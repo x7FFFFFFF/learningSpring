@@ -13,27 +13,20 @@ public class AuthComponent {
 
 
     public boolean auth(Authentication authentication, HttpServletRequest request) {
-        final String key = String.format("%s %s", request.getMethod(), request.getRequestURI());
-        if (check(authentication, key)) return true;
-        return false;
-
-      /*  return authentication.getAuthorities().stream().map(GrantedAuthority::getAuthority)
-                .anyMatch(authority->equals(key));*/
-    }
-
-    private boolean check(Authentication authentication, String key) {
-        final Collection<? extends GrantedAuthority> authorities = authentication.getAuthorities();
-        for (GrantedAuthority authority : authorities) {
-            if (authority.getAuthority().equals(key)) {
-                return true;
-            }
+        final Object principal = authentication.getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails)principal).isAccessGranted(request);
         }
         return false;
-    }
+   }
+
+
 
     public boolean auth(Authentication authentication, HttpServletRequest request, String id) {
-        final String key = String.format("#%s",  id);
-        if (check(authentication, key)) return true;
+        final Object principal = authentication.getPrincipal();
+        if (principal instanceof CustomUserDetails) {
+            return ((CustomUserDetails)principal).isAccessGranted(request, id);
+        }
         return false;
     }
 }
