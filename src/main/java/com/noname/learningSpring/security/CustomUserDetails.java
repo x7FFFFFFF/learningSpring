@@ -68,6 +68,11 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
         if (!isAccessGranted(request)) {
             return false;
         }
+        for (IdMatcher idMatcher : idMatchers) {
+            if (idMatcher.matches(id)) {
+                return true;
+            }
+        }
 
         return false;
     }

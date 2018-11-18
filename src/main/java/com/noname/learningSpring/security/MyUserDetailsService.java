@@ -32,11 +32,11 @@ public class MyUserDetailsService implements UserDetailsService {
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final Account account = accountRepository.findByUserName(username);
-        if (account == null) {
+        final Optional<Account> account = accountRepository.findByUserName(username);
+        if (!account.isPresent()) {
             throw new UsernameNotFoundException(username);
         }
-        return new CustomUserDetails(account, idMatcherFactory, requestMatcherFactory);
+        return new CustomUserDetails(account.get(), idMatcherFactory, requestMatcherFactory);
     }
 
 

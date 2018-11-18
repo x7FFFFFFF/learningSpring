@@ -9,10 +9,11 @@ import org.springframework.util.Assert;
 public class SimpleIdMatcherFactoryImpl implements IdMatcherFactory {
 
     @Override
-    public IdMatcher get(String pattern, boolean caseSensitive) {
-        if (!pattern.contains(ID_SYMBOL)) {
-            throw new SecurityRuntimeException("Wrong pattern: %s", pattern);
+    public IdMatcher get(String txt, boolean caseSensitive) {
+        if (!txt.contains(ID_SYMBOL)) {
+            throw new SecurityRuntimeException("Wrong pattern: %s", txt);
         }
+        final String pattern = txt.substring(1);
         Assert.hasText(pattern, "Pattern cannot be null or empty");
         if (pattern.equals(MATCH_ALL) || pattern.equals("**")) {
             return new IdAllMatcher();
