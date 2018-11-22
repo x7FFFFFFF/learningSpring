@@ -4,6 +4,8 @@ import com.noname.learningSpring.entities.Account;
 import com.noname.learningSpring.entities.Privilege;
 import com.noname.learningSpring.entities.Role;
 import com.noname.learningSpring.repositories.AccountRepository;
+import com.noname.learningSpring.security.matchers.id.IdMatcherFactory;
+import com.noname.learningSpring.security.matchers.request.RequestMatcherFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -22,52 +24,20 @@ import java.util.Optional;
 public class MyUserDetailsService implements UserDetailsService {
     @Autowired
     private AccountRepository accountRepository;
+    @Autowired
+    private IdMatcherFactory idMatcherFactory;
+    @Autowired
+    private RequestMatcherFactory requestMatcherFactory;
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final Account account = accountRepository.findByUserName(username);
-        if (account == null) {
+        final Optional<Account> account = accountRepository.findByUserName(username);
+        if (!account.isPresent()) {
             throw new UsernameNotFoundException(username);
         }
-       // Account account = user.get();
-
-
-        boolean enabled = account.isActive();
-        boolean accountNonExpired = true;
-        boolean credentialsNonExpired = true;
-        boolean accountNonLocked = true;
-
-        return new User(account.getUserName(), //
-                account.getEncrytedPassword(), enabled, accountNonExpired, //
-                credentialsNonExpired, accountNonLocked, getAuthorities(account.getRoles()));
+        return new CustomUserDetails(account.get(), idMatcherFactory, requestMatcherFactory);
     }
 
 
-    private Collection<? extends GrantedAuthority> getAuthorities(
-            Collection<Role> roles) {
-
-        return getGrantedAuthorities(getPrivileges(roles));
-    }
-
-    private List<String> getPrivileges(Collection<Role> roles) {
-
-        List<String> privileges = new ArrayList<>();
-        List<Privilege> collection = new ArrayList<>();
-        for (Role role : roles) {
-            collection.addAll(role.getPrivileges());
-        }
-        for (Privilege item : collection) {
-            privileges.add(item.getName());
-        }
-        return privileges;
-    }
-
-    private List<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
-        List<GrantedAuthority> authorities = new ArrayList<>();
-        for (String privilege : privileges) {
-            authorities.add(new SimpleGrantedAuthority(privilege));
-        }
-        return authorities;
-    }
 }

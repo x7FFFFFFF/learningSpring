@@ -34,7 +34,7 @@ public class Account {
     protected Account() {
     }
 
-    public Account(String userName, String encrytedPassword, boolean active, String userRole, Collection<Role> roles) {
+    public Account(String userName, String encrytedPassword, boolean active,  Collection<Role> roles) {
         this.userName = userName;
         this.encrytedPassword = encrytedPassword;
         this.active = active;

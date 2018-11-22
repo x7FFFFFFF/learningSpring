@@ -29,6 +29,9 @@ public class Product implements Serializable {
 
     @Id
     @GeneratedValue
+    private Long id;
+
+
     @NotNull
     @Column(name = "Code", length = 20, nullable = false)
     private String code;
@@ -84,5 +87,9 @@ public class Product implements Serializable {
 
     public void setImage(Blob image) {
         this.image = image;
+    }
+
+    public void setCode(String code) {
+        this.code = code;
     }
 }
