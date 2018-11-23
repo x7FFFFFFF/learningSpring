@@ -6,7 +6,10 @@
 	<groupId>com.noname</groupId>
 	<artifactId>learningSpring</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<packaging>jar</packaging>
+	<modules>
+		<module>frontend</module>
+	</modules>
+	<packaging>pom</packaging>
 
 	<name>learningSpring</name>
 	<description>Demo project for Spring Boot</description>
