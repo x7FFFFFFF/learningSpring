@@ -30,7 +30,7 @@ public class LearningSpringApplication {
 
 
       new AccountBuilder(context).role("ROLE_MANAGER").userName("manager1").password("123")
-              .privileges("GET /admin/*", "#*").build();
+              .privileges("GET /*", "GET /admin/*", "#*").build();
 
 
 
