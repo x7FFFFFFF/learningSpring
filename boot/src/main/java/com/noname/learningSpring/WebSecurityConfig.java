@@ -8,13 +8,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
+import org.springframework.security.config.BeanIds;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -53,7 +56,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().disable();
+        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
         // Requires login with role ROLE_EMPLOYEE or ROLE_MANAGER.
         // If not, it will redirect to /admin/login.
@@ -64,9 +67,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/admin/product").access("hasRole('ROLE_MANAGER')");*/
         if (!accountRepository.findByUserName(ANONYMOUS).isPresent()) {
             new AccountBuilder(accountRepository, passwordEncoder, privelegeRep, roleRepo).role("ROLE_ANONYMOUS").userName(WebSecurityConfig.ANONYMOUS).password("1")
-                    .privileges("GET /*").build();
+                    .privileges("GET /*", "POST /login").build();
         }
-        http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css", "/admin/login", "/h2-console").permitAll().
+        http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css", "/login",  "/logout","/h2-console").permitAll().
                 and().authorizeRequests().antMatchers("**").access("@authComponent.auth(authentication, request)")
                 .and().anonymous().principal(userDetailsService.loadUserByUsername(ANONYMOUS));
 
@@ -77,18 +80,24 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/403");
 
         // Configuration for Login Form.
-        http.authorizeRequests().and().formLogin()//
-
-                //
+        http.authorizeRequests()
+             /*   .and()
+                .formLogin()//
                 .loginProcessingUrl("/j_spring_security_check") // Submit URL
                 .loginPage("/admin/login")//
                 .defaultSuccessUrl("/admin/accountInfo")//
                 .failureUrl("/admin/login?error=true")//
                 .usernameParameter("userName")//
-                .passwordParameter("password")
+                .passwordParameter("password")*/
 
                 // Configuration for the Logout page.
                 // (After logout, go to home page)
-                .and().logout().logoutUrl("/admin/logout").logoutSuccessUrl("/");
+                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/");
+    }
+
+    @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
+    @Override
+    public AuthenticationManager authenticationManagerBean() throws Exception {
+        return super.authenticationManagerBean();
     }
 }

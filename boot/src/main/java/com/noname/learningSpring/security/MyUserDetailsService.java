@@ -30,7 +30,7 @@ public class MyUserDetailsService implements UserDetailsService {
     private RequestMatcherFactory requestMatcherFactory;
 
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
         final Optional<Account> account = accountRepository.findByUserName(username);
         if (!account.isPresent()) {
