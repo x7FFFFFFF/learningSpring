@@ -1,23 +1,32 @@
 package com.noname.learningSpring;
 
-import com.noname.learningSpring.entities.Account;
-
 import com.noname.learningSpring.entities.*;
 import com.noname.learningSpring.repositories.*;
 import com.noname.learningSpring.security.AccountBuilder;
+import com.noname.learningSpring.security.LocalSecurityContext;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
-import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.context.annotation.Bean;
+import org.springframework.core.Ordered;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.*;
+import org.springframework.web.servlet.ViewResolver;
+import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 import java.math.BigDecimal;
 import java.util.Random;
 
 @SpringBootApplication
 public class LearningSpringApplication {
+
+    @Bean
+    public ViewResolver adminViewResolver() {
+        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
+        resolver.setPrefix("/");
+        resolver.setSuffix(".html");
+        resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
+        return resolver;
+    }
 
 
     public static void main(String[] args) {
@@ -29,7 +38,7 @@ public class LearningSpringApplication {
     private static void initTestData(ConfigurableApplicationContext context) {
 
 
-      new AccountBuilder(context).role("ROLE_MANAGER").userName("manager1").password("123")
+      new AccountBuilder( context.getBean(LocalSecurityContext.class)).role("ROLE_MANAGER").userName("manager1").password("123")
               .privileges("GET /*", "GET /admin/*", "#*").build();
 
 

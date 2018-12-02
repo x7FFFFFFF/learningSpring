@@ -1,49 +1,38 @@
 package com.noname.learningSpring.security;
 
-import com.noname.learningSpring.WebSecurityConfig;
 import com.noname.learningSpring.entities.Account;
-import com.noname.learningSpring.repositories.AccountRepository;
-import com.noname.learningSpring.repositories.PrivilegeRepository;
-import com.noname.learningSpring.repositories.RoleRepository;
-import com.noname.learningSpring.security.matchers.id.IdMatcherFactory;
-import com.noname.learningSpring.security.matchers.request.RequestMatcherFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContext;
 import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
-import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.test.context.support.WithSecurityContextFactory;
 
-import java.lang.annotation.Annotation;
 import java.util.Optional;
 
 public class WithMockCustomUserSecurityContextFactory implements WithSecurityContextFactory<WithMockCustomUser> {
+
+    private final LocalSecurityContext ctx;
+
+    private final AccountBuilder accountBuilder;
+
     @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private IdMatcherFactory idMatcherFactory;
-    @Autowired
-    private RequestMatcherFactory requestMatcherFactory;
-    @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private PrivilegeRepository privelegeRep;
-    @Autowired
-    private RoleRepository roleRepo;
+    public WithMockCustomUserSecurityContextFactory(LocalSecurityContext ctx, AccountBuilder accountBuilder) {
+        this.ctx = ctx;
+        this.accountBuilder = accountBuilder;
+    }
 
     @Override
     public SecurityContext createSecurityContext(WithMockCustomUser withMockCustomUser) {
-        final Optional<Account> account = accountRepository.findByUserName(withMockCustomUser.username());
+        final Optional<Account> account = ctx.getAccountRepository().findByUserName(withMockCustomUser.username());
         final CustomUserDetails principal;
         if (account.isPresent()) {
-            principal = new CustomUserDetails(account.get(), idMatcherFactory, requestMatcherFactory);
+            principal = ctx.createPrincipal(account.get());
         } else {
-            final Account acc = new AccountBuilder(accountRepository, passwordEncoder, privelegeRep, roleRepo)
+            final Account acc = accountBuilder
                     .role(withMockCustomUser.role()).userName(withMockCustomUser.username()).password(withMockCustomUser.password())
                     .privileges(withMockCustomUser.priveleges()).build();
-            principal = new CustomUserDetails(acc, idMatcherFactory, requestMatcherFactory);
+            principal = ctx.createPrincipal(acc);
         }
         SecurityContext context = SecurityContextHolder.createEmptyContext();
         Authentication auth =
