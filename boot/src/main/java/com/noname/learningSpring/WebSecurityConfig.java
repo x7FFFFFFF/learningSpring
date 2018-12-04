@@ -1,11 +1,8 @@
 package com.noname.learningSpring;
 
 import com.noname.learningSpring.repositories.AccountRepository;
-import com.noname.learningSpring.repositories.PrivilegeRepository;
-import com.noname.learningSpring.repositories.RoleRepository;
 import com.noname.learningSpring.security.AccountBuilder;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ConfigurableApplicationContext;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.authentication.AuthenticationManager;
@@ -27,12 +24,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private UserDetailsService userDetailsService;
     @Autowired
     private AccountRepository accountRepository;
+
     @Autowired
-    private PasswordEncoder passwordEncoder;
-    @Autowired
-    private PrivilegeRepository privelegeRep;
-    @Autowired
-    private RoleRepository roleRepo;
+    private AccountBuilder accountBuilder;
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
@@ -66,8 +60,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         // Pages only for MANAGER
         http.authorizeRequests().antMatchers("/admin/product").access("hasRole('ROLE_MANAGER')");*/
         if (!accountRepository.findByUserName(ANONYMOUS).isPresent()) {
-            new AccountBuilder(accountRepository, passwordEncoder, privelegeRep, roleRepo).role("ROLE_ANONYMOUS").userName(WebSecurityConfig.ANONYMOUS).password("1")
-                    .privileges("GET /*", "POST /login").build();
+            accountBuilder.role("ROLE_ANONYMOUS").userName(WebSecurityConfig.ANONYMOUS).password("1")
+                    .privileges("GET /*").build();
+
         }
         http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css", "/login",  "/logout","/h2-console").permitAll().
                 and().authorizeRequests().antMatchers("**").access("@authComponent.auth(authentication, request)")
