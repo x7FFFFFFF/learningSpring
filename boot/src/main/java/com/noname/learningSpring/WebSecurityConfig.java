@@ -28,6 +28,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private AccountBuilder accountBuilder;
 
+    @Autowired
+    private Constants constants;
+
+
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
         auth.authenticationProvider(authenticationProvider());
@@ -61,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/admin/product").access("hasRole('ROLE_MANAGER')");*/
         if (!accountRepository.findByUserName(ANONYMOUS).isPresent()) {
             accountBuilder.role("ROLE_ANONYMOUS").userName(WebSecurityConfig.ANONYMOUS).password("1")
-                    .privileges("GET /*").build();
+                    .privileges("GET /*", String.format("POST %slogin", constants.apiEntryPoint)).build();
 
         }
         http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css", "/login",  "/logout","/h2-console").permitAll().

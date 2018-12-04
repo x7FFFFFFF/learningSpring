@@ -38,8 +38,8 @@ public class SecurityCommonTest {
         mvc.perform(get("/admin/accountInfo"))
                 .andExpect(status().isForbidden());
 
-        mvc.perform(get("/admin/login"))
-                .andExpect(status().isOk());
+  /*      mvc.perform(get("/admin/login"))
+                .andExpect(status().isOk());*/
     }
 
     @Test
@@ -51,8 +51,8 @@ public class SecurityCommonTest {
         mvc.perform(get("/admin/accountInfo"))
                 .andExpect(status().isOk());
 
-        mvc.perform(get("/admin/login"))
-                .andExpect(status().isOk());
+      /*  mvc.perform(get("/admin/login"))
+                .andExpect(status().isOk());*/
     }
 
 }
