@@ -34,15 +34,15 @@ public class AdminRestController {
 
         UsernamePasswordAuthenticationToken authReq
                 = new UsernamePasswordAuthenticationToken(userName, password);
-        try {
+        //try {
             Authentication auth = authManager.authenticate(authReq);
             SecurityContext sc = SecurityContextHolder.getContext();
             sc.setAuthentication(auth);
             HttpSession session = req.getSession(true);
             session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-        } catch (Throwable t) {  // replace with custom AuthenticationManager
+        /*} catch (Throwable t) {  // replace with custom AuthenticationManager
             return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }
+        }*/
 
 
         return new ResponseEntity<>(HttpStatus.NO_CONTENT);

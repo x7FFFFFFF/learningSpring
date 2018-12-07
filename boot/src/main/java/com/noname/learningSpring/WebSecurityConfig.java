@@ -65,10 +65,12 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/admin/product").access("hasRole('ROLE_MANAGER')");*/
         if (!accountRepository.findByUserName(ANONYMOUS).isPresent()) {
             accountBuilder.role("ROLE_ANONYMOUS").userName(WebSecurityConfig.ANONYMOUS).password("1")
-                    .privileges("GET /*", String.format("POST %slogin", constants.apiEntryPoint)).build();
+                    .privileges("GET /*").build();
 
         }
-        http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css", "/login",  "/logout","/h2-console").permitAll().
+        http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css",
+                "/login",  "/logout", String.format("%slogin", constants.apiEntryPoint),
+                "/h2-console").permitAll().
                 and().authorizeRequests().antMatchers("**").access("@authComponent.auth(authentication, request)")
                 .and().anonymous().principal(userDetailsService.loadUserByUsername(ANONYMOUS));
 
