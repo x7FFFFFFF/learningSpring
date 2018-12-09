@@ -1,6 +1,9 @@
 package com.noname.learningSpring.controllers;
 
 
+import com.noname.learningSpring.entities.web.Response;
+import com.noname.learningSpring.entities.web.ResponseBuilder;
+import com.noname.learningSpring.entities.web.UserDataResonse;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -28,24 +31,20 @@ public class AdminRestController {
     private AuthenticationManager authManager;
 
     @PostMapping("/login")
-    public ResponseEntity<Void> login(HttpServletRequest req, @RequestBody Map<String, String> request) {
+    public Response<UserDataResonse> login(HttpServletRequest req, @RequestBody Map<String, String> request) {
         final String userName = request.get("userName");
         final String password = request.get("password");
 
         UsernamePasswordAuthenticationToken authReq
                 = new UsernamePasswordAuthenticationToken(userName, password);
-        //try {
-            Authentication auth = authManager.authenticate(authReq);
-            SecurityContext sc = SecurityContextHolder.getContext();
-            sc.setAuthentication(auth);
-            HttpSession session = req.getSession(true);
-            session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
-        /*} catch (Throwable t) {  // replace with custom AuthenticationManager
-            return new ResponseEntity<>(HttpStatus.UNAUTHORIZED);
-        }*/
 
+        Authentication auth = authManager.authenticate(authReq);
+        SecurityContext sc = SecurityContextHolder.getContext();
+        sc.setAuthentication(auth);
+        HttpSession session = req.getSession(true);
+        session.setAttribute(SPRING_SECURITY_CONTEXT_KEY, sc);
 
-        return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+       return new Response<>(new UserDataResonse(auth));
     }
 
 

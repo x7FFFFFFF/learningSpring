@@ -1,4 +1,4 @@
-package com.noname.learningSpring.entities;
+package com.noname.learningSpring.entities.web;
 
 public class ErrorItem {
     private  String code;

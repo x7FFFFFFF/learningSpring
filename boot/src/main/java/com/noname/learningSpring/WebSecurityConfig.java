@@ -54,7 +54,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(HttpSecurity http) throws Exception {
-        http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
+        //http.csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
 
         // Requires login with role ROLE_EMPLOYEE or ROLE_MANAGER.
         // If not, it will redirect to /admin/login.
@@ -71,6 +71,8 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css",
                 "/login",  "/logout", String.format("%slogin", constants.apiEntryPoint),
                 "/h2-console").permitAll().
+                //and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).
+
                 and().authorizeRequests().antMatchers("**").access("@authComponent.auth(authentication, request)")
                 .and().anonymous().principal(userDetailsService.loadUserByUsername(ANONYMOUS));
 

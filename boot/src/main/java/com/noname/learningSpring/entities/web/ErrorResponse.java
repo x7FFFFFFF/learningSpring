@@ -1,4 +1,4 @@
-package com.noname.learningSpring.entities;
+package com.noname.learningSpring.entities.web;
 
 import java.util.ArrayList;
 import java.util.Arrays;

@@ -6,7 +6,6 @@ import com.noname.learningSpring.entities.Role;
 import com.noname.learningSpring.security.matchers.id.IdMatcher;
 import com.noname.learningSpring.security.matchers.id.IdMatcherFactory;
 import com.noname.learningSpring.security.matchers.request.RequestMatcherFactory;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.CredentialsContainer;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -15,6 +14,7 @@ import org.springframework.security.web.util.matcher.RequestMatcher;
 
 import javax.servlet.http.HttpServletRequest;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CustomUserDetails implements UserDetails, CredentialsContainer {
 
@@ -30,6 +30,7 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
     private final boolean enabled;
     private final Set<RequestMatcher> requestMatchers;
     private final Set<IdMatcher> idMatchers;
+    private final Set<String> roles;
 
 
 
@@ -41,6 +42,7 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
         this.credentialsNonExpired = account.isActive();
         this.enabled = account.isActive();
         this.authorities = getAuthorities(account.getRoles());
+        this.roles = account.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
         final List<String> privileges = getPrivileges(account.getRoles());
         Set<RequestMatcher> setReqMatch = new HashSet<>();
         Set<IdMatcher> setIdMatch = new HashSet<>();
@@ -145,6 +147,9 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
         password = null;
     }
 
+    public Set<String> getRoles() {
+        return roles;
+    }
 
     @Override
     public boolean equals(Object rhs) {
