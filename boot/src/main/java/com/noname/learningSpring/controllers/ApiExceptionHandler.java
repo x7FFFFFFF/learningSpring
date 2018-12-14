@@ -1,9 +1,7 @@
 package com.noname.learningSpring.controllers;
 
-import com.noname.learningSpring.entities.web.ErrorItem;
-import com.noname.learningSpring.entities.web.Response;
-import com.noname.learningSpring.entities.web.ResponseBuilder;
-import org.springframework.http.ResponseEntity;
+import com.noname.learningSpring.entities.web.response.ErrorItemResponse;
+import com.noname.learningSpring.entities.web.response.Response;
 import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
@@ -13,7 +11,7 @@ public class ApiExceptionHandler {
 
     @ExceptionHandler(BadCredentialsException.class)
     public Response handle(BadCredentialsException e) {
-        ErrorItem error = new ErrorItem("401", "Unauthorized");
+        ErrorItemResponse error = new ErrorItemResponse("401", "Unauthorized");
         return new Response<>(error);
     }
 }

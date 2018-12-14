@@ -33,7 +33,6 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
     private final Set<String> roles;
 
 
-
     public CustomUserDetails(Account account, IdMatcherFactory idMatcherFactory, RequestMatcherFactory requestMatcherFactory) {
         this.username = account.getUserName();
         this.password = account.getEncrytedPassword();
@@ -43,7 +42,7 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
         this.enabled = account.isActive();
         this.authorities = getAuthorities(account.getRoles());
         this.roles = account.getRoles().stream().map(Role::getName).collect(Collectors.toSet());
-        final List<String> privileges = getPrivileges(account.getRoles());
+        final Set<String> privileges = getPrivileges(account.getRoles());
         Set<RequestMatcher> setReqMatch = new HashSet<>();
         Set<IdMatcher> setIdMatch = new HashSet<>();
         for (String privilege : privileges) {
@@ -85,11 +84,17 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
         return getGrantedAuthorities(getPrivileges(roles));
     }
 
-    private List<String> getPrivileges(Collection<Role> roles) {
+    private Set<String> getPrivileges(Collection<Role> roles) {
 
-        List<String> privileges = new ArrayList<>();
-        List<Privilege> collection = new ArrayList<>();
+        Set<String> privileges = new HashSet<>();
+        Set<Privilege> collection = new HashSet<>();
         for (Role role : roles) {
+            Role currentRole = role.getParent();
+            while (currentRole != null) { //TODO: Это Херота
+                collection.addAll(currentRole.getPrivileges());
+                currentRole = currentRole.getParent();
+            }
+
             collection.addAll(role.getPrivileges());
         }
         for (Privilege item : collection) {
@@ -98,7 +103,7 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
         return privileges;
     }
 
-    private Set<GrantedAuthority> getGrantedAuthorities(List<String> privileges) {
+    private Set<GrantedAuthority> getGrantedAuthorities(Set<String> privileges) {
         Set<GrantedAuthority> authorities = new HashSet<>();
         for (String privilege : privileges) {
             authorities.add(new SimpleGrantedAuthority(privilege));
@@ -165,5 +170,15 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
     @Override
     public int hashCode() {
         return username.hashCode();
+    }
+
+
+    @Override
+    public String toString() {
+        return "CustomUserDetails{" +
+                "username='" + username + '\'' +
+                ", authorities=" + Arrays.toString(authorities.toArray()) +
+                ", roles=" + Arrays.toString(roles.toArray()) +
+                '}';
     }
 }

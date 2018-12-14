@@ -33,7 +33,7 @@ export class AppService {
     // this.http.post('login', credentials).subscribe(observer);
 
     this.http.post('login', credentials).subscribe(response => {
-        const errorItems = 'errorItems';
+        const errorItems = 'errors';
         const errorItemsValue = response.hasOwnProperty(errorItems) ? response[errorItems] : undefined;
         if (errorItemsValue !== undefined && errorItemsValue.length > 0) {
           this.msgService.addErrors(errorItemsValue as ErrorItem[]);

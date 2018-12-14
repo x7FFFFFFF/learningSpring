@@ -1,6 +1,7 @@
 package com.noname.learningSpring.security;
 
 import com.noname.learningSpring.entities.Account;
+import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
@@ -14,10 +15,10 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
     private final LocalSecurityContext ctx;
 
-    private final AccountBuilder accountBuilder;
+    private final ObjectFactory<AccountBuilder> accountBuilder;
 
     @Autowired
-    public WithMockCustomUserSecurityContextFactory(LocalSecurityContext ctx, AccountBuilder accountBuilder) {
+    public WithMockCustomUserSecurityContextFactory(LocalSecurityContext ctx, ObjectFactory<AccountBuilder> accountBuilder) {
         this.ctx = ctx;
         this.accountBuilder = accountBuilder;
     }
@@ -29,7 +30,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
         if (account.isPresent()) {
             principal = ctx.createPrincipal(account.get());
         } else {
-            final Account acc = accountBuilder
+            final Account acc = accountBuilder.getObject()
                     .role(withMockCustomUser.role()).userName(withMockCustomUser.username()).password(withMockCustomUser.password())
                     .privileges(withMockCustomUser.priveleges()).build();
             principal = ctx.createPrincipal(acc);

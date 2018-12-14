@@ -1,10 +1,10 @@
-package com.noname.learningSpring.entities.web;
+package com.noname.learningSpring.entities.web.response;
 
-public class ErrorItem {
+public class ErrorItemResponse {
     private  String code;
     private String message;
 
-    public ErrorItem(String code, String message) {
+    public ErrorItemResponse(String code, String message) {
         this.code = code;
         this.message = message;
     }

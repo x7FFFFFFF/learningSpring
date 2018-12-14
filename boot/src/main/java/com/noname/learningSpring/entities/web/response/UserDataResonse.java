@@ -1,4 +1,4 @@
-package com.noname.learningSpring.entities.web;
+package com.noname.learningSpring.entities.web.response;
 
 import com.noname.learningSpring.security.CustomUserDetails;
 import org.springframework.security.core.Authentication;

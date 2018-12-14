@@ -10,7 +10,7 @@ import java.lang.annotation.RetentionPolicy;
 @WithSecurityContext(factory = WithMockCustomUserSecurityContextFactory.class)
 public @interface WithMockCustomUser {
 
-    String username() default WebSecurityConfig.ANONYMOUS;
+    String username() default WebSecurityConfig.ANONYMOUS_USER_NAME;
 
     String password();
 

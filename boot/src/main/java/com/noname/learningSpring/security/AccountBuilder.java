@@ -3,6 +3,7 @@ package com.noname.learningSpring.security;
 import com.noname.learningSpring.entities.Account;
 import com.noname.learningSpring.entities.Privilege;
 import com.noname.learningSpring.entities.Role;
+import com.noname.learningSpring.repositories.RoleRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.config.ConfigurableBeanFactory;
 import org.springframework.context.annotation.Scope;
@@ -21,6 +22,7 @@ public class AccountBuilder {
     private final LocalSecurityContext context;
     private final List<String> privileges = new ArrayList<>();
     private String role;
+    private String parentRole;
     private String userName;
     private String password;
 
@@ -37,6 +39,11 @@ public class AccountBuilder {
 
     public AccountBuilder role(String role) {
         this.role = role;
+        return this;
+    }
+
+    public AccountBuilder parentRole(String role) {
+        this.parentRole = role;
         return this;
     }
 
@@ -81,13 +88,27 @@ public class AccountBuilder {
     private Role createRoleIfNotFound(
             String name, Collection<Privilege> privileges) {
 
-        Optional<Role> roleOpt = context.getRoleRepo().findByName(name);
+        final RoleRepository roleRepo = context.getRoleRepo();
+        Optional<Role> roleOpt = roleRepo.findByName(name);
         if (!roleOpt.isPresent()) {
             Role role = new Role(name);
             role.setPrivileges(privileges);
-            context.getRoleRepo().save(role);
+            role.setParent(getParent());
+            roleRepo.save(role);
             return role;
         }
         return roleOpt.get();
+    }
+
+    private Role getParent() {
+        final RoleRepository roleRepo = context.getRoleRepo();
+        if (parentRole != null) {
+            final Optional<Role> parent = roleRepo.findByName(parentRole);
+            if (!parent.isPresent()) {
+                throw new IllegalStateException("Parent role not found:" + parentRole);
+            }
+            return parent.get();
+        }
+        return null;
     }
 }

@@ -2,6 +2,8 @@ package com.noname.learningSpring.entities;
 
 import javax.persistence.*;
 import java.util.Collection;
+import java.util.HashSet;
+import java.util.Set;
 
 @Entity
 public class Role {
@@ -24,6 +26,14 @@ public class Role {
             inverseJoinColumns = @JoinColumn(
                     name = "privilege_id", referencedColumnName = "id"))
     private Collection<Privilege> privileges;
+
+
+    @ManyToOne(cascade={CascadeType.ALL})
+    @JoinColumn(name="parent_id")
+    private Role parent;
+
+    @OneToMany(mappedBy="parent")
+    private Set<Role> children = new HashSet<Role>();
 
     public Role(String name) {
 
@@ -62,13 +72,26 @@ public class Role {
         this.privileges = privileges;
     }
 
+    public Role getParent() {
+        return parent;
+    }
+
+    public void setParent(Role parent) {
+        this.parent = parent;
+    }
+
+    public Set<Role> getChildren() {
+        return children;
+    }
+
+    public void setChildren(Set<Role> children) {
+        this.children = children;
+    }
+
     @Override
     public String toString() {
         return "Role{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", accounts=" + accounts +
-                ", privileges=" + privileges +
+                "name='" + name + '\'' +
                 '}';
     }
 }

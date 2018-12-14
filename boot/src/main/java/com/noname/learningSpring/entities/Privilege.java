@@ -49,9 +49,7 @@ public class Privilege {
     @Override
     public String toString() {
         return "Privilege{" +
-                "id=" + id +
-                ", name='" + name + '\'' +
-                ", roles=" + roles +
+                "name='" + name + '\'' +
                 '}';
     }
 }

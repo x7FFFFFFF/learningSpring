@@ -8,9 +8,12 @@ import org.springframework.stereotype.Component;
 public class Constants {
 
     public final String apiEntryPoint;
+    public final boolean csrf;
 
     @Autowired
-    public Constants(@Value("${app.server.apiEntryPoint}") String apiEntryPoint) {
+    public Constants(@Value("${app.server.apiEntryPoint}") String apiEntryPoint,
+                     @Value("${app.server.csrf}") boolean csrf) {
         this.apiEntryPoint = apiEntryPoint;
+        this.csrf = csrf;
     }
 }

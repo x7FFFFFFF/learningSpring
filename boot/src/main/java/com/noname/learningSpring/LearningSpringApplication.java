@@ -4,6 +4,7 @@ import com.noname.learningSpring.entities.*;
 import com.noname.learningSpring.repositories.*;
 import com.noname.learningSpring.security.AccountBuilder;
 import com.noname.learningSpring.security.LocalSecurityContext;
+import org.springframework.beans.factory.ObjectProvider;
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.springframework.context.ConfigurableApplicationContext;
@@ -36,10 +37,10 @@ public class LearningSpringApplication {
 
     @Transactional
     private static void initTestData(ConfigurableApplicationContext context) {
+        final ObjectProvider<AccountBuilder> accountBuilder = context.getBeanProvider(AccountBuilder.class);
 
-
-      new AccountBuilder( context.getBean(LocalSecurityContext.class)).role("ROLE_MANAGER").userName("manager1").password("123")
-              .privileges("GET /*", "GET /admin/*", "#*").build();
+        accountBuilder.getObject().role("ROLE_MANAGER").parentRole(WebSecurityConfig.ROLE_ANONYMOUS).userName("manager1").password("123")
+              .privileges("GET /*/", "GET /admin/*/", "#*").build();
 
 
 
