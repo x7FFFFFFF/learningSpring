@@ -20,14 +20,7 @@ import java.util.Random;
 @SpringBootApplication
 public class LearningSpringApplication {
 
-    @Bean
-    public ViewResolver adminViewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/");
-        resolver.setSuffix(".html");
-        resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return resolver;
-    }
+
 
 
     public static void main(String[] args) {

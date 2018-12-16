@@ -1,7 +1,5 @@
 package com.noname.learningSpring.controllers;
 
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Controller;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.ui.Model;
@@ -20,10 +18,10 @@ public class AdminController {
         return "login";
     }
 
-    @RequestMapping(value = { "/admin/accountInfo" }, method = RequestMethod.GET)
+   /* @RequestMapping(value = { "/admin/accountInfo" }, method = RequestMethod.GET)
     public String accountInfo(Model model) {
         UserDetails userDetails = (UserDetails) SecurityContextHolder.getContext().getAuthentication().getPrincipal();
         model.addAttribute("userDetails", userDetails);
         return "accountInfo";
-    }
+    }*/
 }

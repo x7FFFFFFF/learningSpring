@@ -22,21 +22,21 @@ import java.util.Optional;
 
 @Service
 public class MyUserDetailsService implements UserDetailsService {
-    @Autowired
-    private AccountRepository accountRepository;
-    @Autowired
-    private IdMatcherFactory idMatcherFactory;
-    @Autowired
-    private RequestMatcherFactory requestMatcherFactory;
+
+    private final LocalSecurityContext context;
+
+    public MyUserDetailsService(LocalSecurityContext context) {
+        this.context = context;
+    }
 
     @Override
     public CustomUserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
 
-        final Optional<Account> account = accountRepository.findByUserName(username);
+        final Optional<Account> account = context.getAccountRepository().findByUserName(username);
         if (!account.isPresent()) {
             throw new UsernameNotFoundException(username);
         }
-        return new CustomUserDetails(account.get(), idMatcherFactory, requestMatcherFactory);
+        return new CustomUserDetails(account.get(), context.getIdMatcherFactory(), context.getRequestMatcherFactory());
     }
 
 
