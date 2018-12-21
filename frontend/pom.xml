@@ -12,7 +12,7 @@
   <artifactId>frontend</artifactId>
   <build>
     <plugins>
-      <plugin>
+      <plugin><!--TODO: Это костыль-->
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-antrun-plugin</artifactId>
         <version>1.8</version>
@@ -74,6 +74,56 @@
 
         </executions>
       </plugin>
+
+      <plugin>
+        <artifactId>maven-resources-plugin</artifactId><!--TODO: Это костыль-->
+        <version>3.1.0</version>
+        <executions>
+          <execution>
+            <id>copy-resources</id>
+            <phase>compile</phase>
+            <goals>
+              <goal>copy-resources</goal>
+            </goals>
+            <configuration>
+              <outputDirectory>${basedir}/target/classes/public</outputDirectory>
+              <resources>
+                <resource>
+                  <directory>src/main/resources/templates</directory>
+                  <filtering>false</filtering>
+                  <includes>
+                    <include>**/*.css</include>
+                    <include>**/*.js</include>
+                    <include>**/*.map</include>
+                  </includes>
+                </resource>
+              </resources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+<!--      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-antrun-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <phase></phase>
+            <goals>
+              <goal>run</goal>
+            </goals>
+            <configuration>
+              <target>
+                <delete>
+                  <fileset dir="${basedir}/target/classes/templates" includes="**/*.css, **/*.js, **/*.map"/>
+                </delete>
+
+              </target>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>-->
+
     </plugins>
   </build>
 
