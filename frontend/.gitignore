@@ -6,6 +6,7 @@
 /out-tsc
 /target
 /src/main/resources/public
+/src/main/
 
 
 # dependencies
