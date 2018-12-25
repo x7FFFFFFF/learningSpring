@@ -33,7 +33,7 @@ public class LearningSpringApplication {
         final ObjectProvider<AccountBuilder> accountBuilder = context.getBeanProvider(AccountBuilder.class);
 
         accountBuilder.getObject().role("ROLE_MANAGER").parentRole(WebSecurityConfig.ROLE_ANONYMOUS).userName("manager1").password("123")
-              .privileges("GET /*/", "GET /admin/*/", "#*").build();
+              .privileges("GET /*/", "GET /admin/*/",  "GET /api/v1/**",  "#*").build();
 
 
 

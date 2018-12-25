@@ -28,16 +28,17 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
         final Optional<Account> account = ctx.getAccountRepository().findByUserName(withMockCustomUser.username());
         final CustomUserDetails principal;
         if (account.isPresent()) {
-            principal = ctx.createPrincipal(account.get());
-        } else {
-            final Account acc = accountBuilder.getObject()
-                    .role(withMockCustomUser.role()).userName(withMockCustomUser.username()).password(withMockCustomUser.password())
-                    .privileges(withMockCustomUser.priveleges()).build();
-            principal = ctx.createPrincipal(acc);
+            ctx.getAccountRepository().delete(account.get());
         }
-        SecurityContext context = SecurityContextHolder.createEmptyContext();
+        final Account acc = accountBuilder.getObject()
+                .role(withMockCustomUser.role()).userName(withMockCustomUser.username()).password(withMockCustomUser.password())
+                .privileges(withMockCustomUser.priveleges()).build();
+        principal = ctx.createPrincipal(acc);
+
+
         Authentication auth =
                 new UsernamePasswordAuthenticationToken(principal, principal.getPassword(), principal.getAuthorities());
+        final SecurityContext context = SecurityContextHolder.getContext();
         context.setAuthentication(auth);
         return context;
     }

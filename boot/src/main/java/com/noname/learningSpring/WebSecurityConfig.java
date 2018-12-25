@@ -24,7 +24,7 @@ import org.springframework.web.servlet.view.InternalResourceViewResolver;
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     public static final String ANONYMOUS_USER_NAME = "anonymous";
-    public static final String H_2_CONSOLE = "/h2-console/**";
+
     public static final String ROLE_ANONYMOUS = "ROLE_ANONYMOUS";
     @Autowired
     private UserDetailsService userDetailsService;
@@ -62,54 +62,33 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         if (constants.csrf) {
             http.csrf()
-                    .ignoringAntMatchers(H_2_CONSOLE)
                     .csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse());
         } else {
             http.csrf().disable();
         }
 
-        http.antMatcher(H_2_CONSOLE).headers().frameOptions().disable();
 
-        // Requires login with role ROLE_EMPLOYEE or ROLE_MANAGER.
-        // If not, it will redirect to /admin/login.
-        /*http.authorizeRequests().antMatchers("/admin/orderList", "/admin/order", "/admin/accountInfo")//
-                .access("hasAnyRole('ROLE_EMPLOYEE', 'ROLE_MANAGER')");
-
-        // Pages only for MANAGER
-        http.authorizeRequests().antMatchers("/admin/product").access("hasRole('ROLE_MANAGER')");*/
         if (!accountRepository.findByUserName(ANONYMOUS_USER_NAME).isPresent()) {
             accountBuilder.getObject().role(ROLE_ANONYMOUS).userName(WebSecurityConfig.ANONYMOUS_USER_NAME).password("1")
-                    .privileges("GET /*/", "GET /h2-console/**", "POST /h2-console/**").build();
+                    .privileges("GET /*/").build();
 
         }
         http.authorizeRequests().antMatchers("/*.js", "/*.ico", "/*.png", "/*.css",
-                "/login", "/logout", String.format("%slogin", constants.apiEntryPoint),
-                "/h2-console**").permitAll().
-                //and().csrf().csrfTokenRepository(CookieCsrfTokenRepository.withHttpOnlyFalse()).
+                constants.entry("login"), constants.entry("logout"), "/admin/login"
+        ).permitAll().
 
-                        and().authorizeRequests().antMatchers("**").access("@authComponent.auth(authentication, request)")
+                and().authorizeRequests().antMatchers("**").access("@authComponent.auth(authentication, request)")
                 .and().anonymous().principal(userDetailsService.loadUserByUsername(ANONYMOUS_USER_NAME));
 
 
-        // When user login, role XX.
-        // But access to the page requires the YY role,
-        // An AccessDeniedException will be thrown.
         http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/403");
 
-        // Configuration for Login Form.
-        http.authorizeRequests()
-                /*   .and()
-                   .formLogin()//
-                   .loginProcessingUrl("/j_spring_security_check") // Submit URL
-                   .loginPage("/admin/login")//
-                   .defaultSuccessUrl("/admin/accountInfo")//
-                   .failureUrl("/admin/login?error=true")//
-                   .usernameParameter("userName")//
-                   .passwordParameter("password")*/
 
-                // Configuration for the Logout page.
-                // (After logout, go to home page)
-                .and().logout().logoutUrl("/logout").logoutSuccessUrl("/");
+        http.authorizeRequests()
+                .and().logout().logoutUrl(constants.entry("logout"))
+                .logoutSuccessHandler((request, response, authentication) -> {
+                    //NOTHING TO DO
+                });
     }
 
     @Bean(name = BeanIds.AUTHENTICATION_MANAGER)
@@ -119,12 +98,4 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     }
 
 
-/*    @Bean
-    public ViewResolver adminViewResolver() {
-        InternalResourceViewResolver resolver = new InternalResourceViewResolver();
-        resolver.setPrefix("/");
-        resolver.setSuffix(".html");
-        resolver.setOrder(Ordered.HIGHEST_PRECEDENCE);
-        return resolver;
-    }*/
 }

@@ -42,11 +42,7 @@ export class AppService {
         }
 
 
-        this.authenticated = response['status'] === 204;
-        if (!this.authenticated) {
-          this.msgService.add('Authentification error!');
-          return;
-        }
+        this.authenticated = true;
 
         return callback && callback();
       },
@@ -62,4 +58,9 @@ export class AppService {
 
   }
 
+  logout() {
+    this.http.post('logout', null).subscribe(() => {
+      this.authenticated = false;
+    });
+  }
 }
