@@ -13,25 +13,28 @@ import {debounceTime, distinctUntilChanged, tap} from 'rxjs/operators';
   styleUrls: ['./roles.component.css']
 })
 export class RolesComponent implements OnInit, AfterViewInit {
-  description: String = 'Roles';
+  readonly description: String = 'Roles';
 
   dataSource: RolesDataSource;
+  count = 0;
 
-  displayedColumns = ['name', 'parent', 'privileges'];
+  readonly displayedColumns = ['name', 'parent', 'privileges'];
+
+  readonly DELIM = ',';
+
   @ViewChild(MatPaginator) paginator: MatPaginator;
 
   @ViewChild(MatSort) sort: MatSort;
 
   @ViewChild('input') input: ElementRef;
 
-  rolesCount = 100;
 
   constructor(private rolesService: RolesServiceService) {
   }
 
   ngOnInit() {
     this.dataSource = new RolesDataSource(this.rolesService);
-    this.dataSource.loadRoles('', 'asc', 0, 10);
+    this.dataSource.loadRoles('', 'asc', 0, 1);
   }
 
   ngAfterViewInit() {
@@ -56,14 +59,20 @@ export class RolesComponent implements OnInit, AfterViewInit {
       )
       .subscribe();
 
+    this.dataSource.count$.subscribe(value => {
+      this.count = value;
+    });
   }
 
   loadRolesPage() {
     this.dataSource.loadRoles(
       this.input.nativeElement.value,
-      this.sort.direction,
+      this.sort.active + this.DELIM + this.sort.direction,
       this.paginator.pageIndex,
       this.paginator.pageSize);
   }
 
+  getCount() {
+    return this.count;
+  }
 }

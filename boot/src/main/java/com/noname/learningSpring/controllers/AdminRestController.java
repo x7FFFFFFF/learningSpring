@@ -48,8 +48,13 @@ public class AdminRestController {
 
 
     @GetMapping("/roles")
-    public Response<Page<RoleResponse>> getRoles(Pageable pageable) {
-        final Page<RoleResponse> resp = roleRepository.findAll(pageable).map(RoleResponse::map);
+    public Response<Page<RoleResponse>> getRoles(Pageable pageable, String filter) {
+        Page<RoleResponse> resp;
+        if (filter == null || filter.isEmpty()) {
+            resp = roleRepository.findAll(pageable).map(RoleResponse::map);
+        } else {
+            resp = roleRepository.findByNameContainingIgnoreCase(pageable, filter).map(RoleResponse::map);
+        }
         return new Response<>(resp);
     }
 

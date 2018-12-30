@@ -20,9 +20,9 @@ export class RolesServiceService {
     return this.http.get('/roles', {
       params: new HttpParams()
         .set('filter', filter)
-        .set('sortOrder', sortOrder)
-        .set('pageNumber', pageNumber.toString())
-        .set('pageSize', pageSize.toString())
+        .set('sort', sortOrder)
+        .set('page', pageNumber.toString())
+        .set('size', pageSize.toString())
     }).pipe(
       map(result => {
         const res = result['result'];

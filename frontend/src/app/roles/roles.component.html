@@ -52,8 +52,8 @@
   </mat-table>
 
 
-  <mat-paginator [length]="count$" [pageSize]="10"
-                 [pageSizeOptions]="[10, 20, 30]"></mat-paginator>
+  <mat-paginator [length]="getCount()" [pageSize]="1"
+                 [pageSizeOptions]="[1, 3, 5]"></mat-paginator>
 
 
 </div>
