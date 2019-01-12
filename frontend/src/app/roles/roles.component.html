@@ -23,7 +23,7 @@
 
       <mat-header-cell *matHeaderCellDef mat-sort-header>name</mat-header-cell>
 
-      <mat-cell *matCellDef="let role">{{role.name}}</mat-cell>
+      <mat-cell *matCellDef="let role" class="roleEdit" (click)="editRole(role)" >{{role.name}}</mat-cell>
 
     </ng-container>
 

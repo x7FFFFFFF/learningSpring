@@ -1,6 +1,6 @@
 export class Role {
 
 
-  constructor(name: String, parent: String, privileges: String[]) {
+  constructor(public name: String, public parent: String, public privileges: String[]) {
   }
 }

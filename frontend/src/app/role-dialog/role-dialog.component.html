@@ -1,0 +1,22 @@
+<form [formGroup]="form" (ngSubmit)="submit(form)">
+  <h2 mat-dialog-title>Edit role</h2>
+  <mat-dialog-content class="error">
+    <mat-form-field>
+      <input matInput
+             placeholder="Role name"
+             formControlName="roleName">
+    </mat-form-field>
+    <mat-form-field>
+      <mat-select placeholder="Parent"  [(value)]="selectedParent">
+        <mat-option *ngFor="let parent of parents" [value]="parent">
+          {{parent}}
+        </mat-option>
+      </mat-select>
+    </mat-form-field>
+
+  </mat-dialog-content>
+  <mat-dialog-actions>
+    <button mat-button type="submit">Save</button>
+    <button mat-button type="button" mat-dialog-close>Cancel</button>
+  </mat-dialog-actions>
+</form>

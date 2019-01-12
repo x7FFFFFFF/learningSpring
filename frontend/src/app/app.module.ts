@@ -6,7 +6,7 @@ import {AppComponent} from './app.component';
 import {RouterModule, Routes} from '@angular/router';
 import {LoginComponent} from './login/login.component';
 import {HTTP_INTERCEPTORS, HttpClientModule} from '@angular/common/http';
-import {FormsModule} from '@angular/forms';
+import {FormsModule, ReactiveFormsModule} from '@angular/forms';
 import {AppService} from './app.service';
 import {RequestInterceptor} from './RequestInterceptor';
 import {NgbModule} from '@ng-bootstrap/ng-bootstrap';
@@ -15,10 +15,13 @@ import {MessageService} from './message.service';
 import { DashboardComponent } from './dashboard/dashboard.component';
 import { RolesComponent } from './roles/roles.component';
 import { AccountsComponent } from './accounts/accounts.component';
-import { MatInputModule, MatPaginatorModule, MatProgressSpinnerModule,
-  MatSortModule, MatTableModule } from '@angular/material';
+import {
+  MatDialogModule, MatInputModule, MatPaginatorModule, MatProgressSpinnerModule, MatSelectModule,
+  MatSortModule, MatTableModule
+} from '@angular/material';
 import {RolesServiceService} from './roles/roles-service.service';
 import {BrowserAnimationsModule} from '@angular/platform-browser/animations';
+import { RoleDialogComponent } from './role-dialog/role-dialog.component';
 
 const routes: Routes = [
   {path: '', pathMatch: 'full', redirectTo: 'login'},
@@ -38,7 +41,8 @@ const routes: Routes = [
     MessageComponent,
     DashboardComponent,
     RolesComponent,
-    AccountsComponent
+    AccountsComponent,
+    RoleDialogComponent
   ],
   imports: [
     RouterModule.forRoot(routes),
@@ -51,7 +55,10 @@ const routes: Routes = [
     MatPaginatorModule,
     MatSortModule,
     MatProgressSpinnerModule,
-    BrowserAnimationsModule
+    MatDialogModule,
+    BrowserAnimationsModule,
+    ReactiveFormsModule,
+    MatSelectModule
   ],
   /* exports:[
      MessageComponent
@@ -59,7 +66,8 @@ const routes: Routes = [
   providers: [AppService, MessageService, RolesServiceService,
     {provide: HTTP_INTERCEPTORS, useClass: RequestInterceptor, multi: true}
   ],
-  bootstrap: [AppComponent]
+  bootstrap: [AppComponent],
+  entryComponents: [RoleDialogComponent]
 })
 export class AppModule {
 }

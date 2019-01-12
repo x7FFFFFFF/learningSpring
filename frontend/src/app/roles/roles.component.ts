@@ -1,11 +1,13 @@
 import {AfterViewInit, Component, ElementRef, OnInit, ViewChild} from '@angular/core';
 import {AppService} from '../app.service';
 import {RolesDataSource} from './RolesDataSource';
-import {MatPaginator, MatSort} from '@angular/material';
+import {MatDialog, MatPaginator, MatSort} from '@angular/material';
 
 import {RolesServiceService} from './roles-service.service';
 import {fromEvent, merge} from 'rxjs';
 import {debounceTime, distinctUntilChanged, tap} from 'rxjs/operators';
+import {Role} from './Role';
+import {RoleDialogComponent} from '../role-dialog/role-dialog.component';
 
 @Component({
   selector: 'app-roles',
@@ -29,7 +31,7 @@ export class RolesComponent implements OnInit, AfterViewInit {
   @ViewChild('input') input: ElementRef;
 
 
-  constructor(private rolesService: RolesServiceService) {
+  constructor(private rolesService: RolesServiceService, public dialog: MatDialog) {
   }
 
   ngOnInit() {
@@ -74,5 +76,13 @@ export class RolesComponent implements OnInit, AfterViewInit {
 
   getCount() {
     return this.count;
+  }
+
+  editRole(role: Role) {
+    this.dialog.open(RoleDialogComponent, {
+      data: role
+     // width: '250px'
+    });
+
   }
 }
