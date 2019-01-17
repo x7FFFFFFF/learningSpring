@@ -3,6 +3,6 @@
 export class Credentials {
 
 
-  constructor(public userName: String, public password: String) {
+  constructor(public name: String, public password: String) {
   }
 }

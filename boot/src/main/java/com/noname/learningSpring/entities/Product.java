@@ -25,7 +25,7 @@ import java.util.Date;
 
 @Entity
 @Table(name = "Products")
-public class Product implements Serializable {
+public class Product implements Serializable, IEntity<Product> {
 
     @Id
     @GeneratedValue
@@ -65,12 +65,27 @@ public class Product implements Serializable {
         return code;
     }
 
+    @Override
+    public Long getId() {
+        return id;
+    }
+
+    @Override
+    public void setId(Long id) {
+        this.id = id;
+    }
+
     public String getName() {
         return name;
     }
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public EntityReference<Product> toReference() {
+        return new EntityReference<>(id, name, Product.class);
     }
 
     public BigDecimal getPrice() {

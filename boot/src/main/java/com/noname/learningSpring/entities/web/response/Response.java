@@ -36,5 +36,9 @@ public class Response<T> extends ResponseEntity<Map> {
         this(Collections.emptyList(), result);
     }
 
+    public static <T> Response<T> error(HttpStatus httpStatus) {
+        return new Response<>(ErrorItemResponse.of(httpStatus));
+    }
+
 
 }

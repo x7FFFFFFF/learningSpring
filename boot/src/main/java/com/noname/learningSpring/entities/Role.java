@@ -6,15 +6,14 @@ import java.util.HashSet;
 import java.util.Set;
 
 @Entity
-public class Role {
-    public Role() {
-    }
+public class Role implements IEntity<Role> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
     private Long id;
 
     private String name;
+
     @ManyToMany(mappedBy = "roles")
     private Collection<Account> accounts;
 
@@ -28,17 +27,21 @@ public class Role {
     private Collection<Privilege> privileges;
 
 
-    @ManyToOne(cascade={CascadeType.ALL})
-    @JoinColumn(name="parent_id")
+    @ManyToOne(cascade = {CascadeType.ALL})
+    @JoinColumn(name = "parent_id")
     private Role parent;
 
-    @OneToMany(mappedBy="parent")
+    @OneToMany(mappedBy = "parent")
     private Set<Role> children = new HashSet<Role>();
+
+    public Role() {
+    }
 
     public Role(String name) {
 
         this.name = name;
     }
+
 
     public Long getId() {
         return id;
@@ -54,6 +57,11 @@ public class Role {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public EntityReference<Role> toReference() {
+        return new EntityReference<>(id, name, Role.class);
     }
 
     public Collection<Account> getAccounts() {

@@ -34,7 +34,7 @@ public class CustomUserDetails implements UserDetails, CredentialsContainer {
 
 
     public CustomUserDetails(Account account, IdMatcherFactory idMatcherFactory, RequestMatcherFactory requestMatcherFactory) {
-        this.username = account.getUserName();
+        this.username = account.getName();
         this.password = account.getEncrytedPassword();
         this.accountNonExpired = account.isActive();
         this.accountNonLocked = account.isActive();

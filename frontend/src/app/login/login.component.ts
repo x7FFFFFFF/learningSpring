@@ -10,7 +10,7 @@ import {Credentials} from '../Credentials';
   styleUrls: ['./login.component.css']
 })
 export class LoginComponent implements OnInit {
-  credentials: Credentials = {userName: '', password: ''};
+  credentials: Credentials = {name: '', password: ''};
 
   constructor(private app: AppService, private http: HttpClient, private router: Router) {
   }

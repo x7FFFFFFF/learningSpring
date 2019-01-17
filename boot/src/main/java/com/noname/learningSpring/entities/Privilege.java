@@ -4,7 +4,7 @@ import javax.persistence.*;
 import java.util.Collection;
 
 @Entity
-public class Privilege {
+public class Privilege implements IEntity<Privilege> {
 
     @Id
     @GeneratedValue(strategy = GenerationType.AUTO)
@@ -36,6 +36,11 @@ public class Privilege {
 
     public void setName(String name) {
         this.name = name;
+    }
+
+    @Override
+    public EntityReference<Privilege> toReference() {
+        return new EntityReference<>(id, name, Privilege.class);
     }
 
     public Collection<Role> getRoles() {

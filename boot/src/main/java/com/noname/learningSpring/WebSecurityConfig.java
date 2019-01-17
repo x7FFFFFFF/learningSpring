@@ -6,7 +6,6 @@ import org.springframework.beans.factory.ObjectFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.Ordered;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.config.BeanIds;
@@ -17,8 +16,6 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
-import org.springframework.web.servlet.ViewResolver;
-import org.springframework.web.servlet.view.InternalResourceViewResolver;
 
 @Configuration
 public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
@@ -68,7 +65,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
         }
 
 
-        if (!accountRepository.findByUserName(ANONYMOUS_USER_NAME).isPresent()) {
+        if (!accountRepository.findByName(ANONYMOUS_USER_NAME).isPresent()) {
             accountBuilder.getObject().role(ROLE_ANONYMOUS).userName(WebSecurityConfig.ANONYMOUS_USER_NAME).password("1")
                     .privileges("GET /*/").build();
 

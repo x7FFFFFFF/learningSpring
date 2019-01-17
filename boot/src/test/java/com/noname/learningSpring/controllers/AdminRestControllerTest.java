@@ -4,7 +4,6 @@ import com.noname.learningSpring.Constants;
 import com.noname.learningSpring.security.WithMockCustomUser;
 import org.json.JSONException;
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.skyscreamer.jsonassert.JSONAssert;
@@ -16,12 +15,12 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.web.client.TestRestTemplate;
 import org.springframework.boot.web.server.LocalServerPort;
 import org.springframework.http.*;
-import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Objects;
 
@@ -33,10 +32,14 @@ import java.util.Objects;
         locations = "classpath:application-integrationtest.properties")
 public class AdminRestControllerTest {
 
+    public static final String NAME = "name";
+    public static final String ID = "id";
+    public static final String PARENT = "parent";
+    public static final String PRIVILEGES = "privileges";
     /*   static {
-           System.setProperty(SecurityContextHolder.SYSTEM_PROPERTY, SecurityContextHolder.MODE_GLOBAL);
-       }
-   */
+                       System.setProperty(SecurityContextHolder.SYSTEM_PROPERTY, SecurityContextHolder.MODE_GLOBAL);
+                   }
+               */
     @LocalServerPort
     int randomServerPort;
 
@@ -102,7 +105,7 @@ public class AdminRestControllerTest {
             priveleges = {"GET /*", "GET /admin/*", "GET /api/v1/**", "#*"})
     public void testGetRolesManger() throws JSONException {
         final String cookie = login("manager1", "123");
-        UriComponentsBuilder uriComponentsBuilder = UriComponentsBuilder.fromHttpUrl(createURLWithPort("roles"))
+        UriComponentsBuilder uriComponentsBuilder = getRolesPath()
                 .queryParam("page", "0")
                 .queryParam("size", "100");
 
@@ -116,6 +119,108 @@ public class AdminRestControllerTest {
                 , response.getBody(), JSONCompareMode.LENIENT);
 
     }
+
+    @Test
+    @WithMockCustomUser(username = "manager1", password = "123", role = "ROLE_MANAGER",
+            priveleges = {"GET /*", "GET /admin/*", "GET /api/v1/**", "#*"})
+    public void testRoleCrud() throws JSONException {
+        final String cookie = login("manager1", "123");
+        Integer id = getFistRoleId(cookie);
+
+
+        //final Integer id = (Integer)getResult(response, "result", "content", 0, "id");
+        UriComponentsBuilder urlGet = getRolesPath()
+                .pathSegment(id.toString());
+        ResponseEntity<Map> responseGet = get(cookie, urlGet);
+        Map<String, Object> role = getRole(responseGet);
+        role.put(NAME, "ROLE_TEST");
+        ResponseEntity<Map> responsePut = put(cookie, urlGet, role);
+
+        ResponseEntity<Map> responseGet2 = get(cookie, urlGet);
+        Map<String, Object> roleChanged = getRole(responseGet2);
+        Assert.assertEquals("ROLE_TEST", roleChanged.get(NAME));
+
+
+
+
+
+
+
+    }
+
+    private Map<String, Object> getRole(ResponseEntity<Map> responseGet) {
+        final Result result = new Result(responseGet).parse("result");
+        Map<String, Object> map = new HashMap<>();
+        map.put(ID, result.parse(ID).getValue());
+        map.put(NAME, result.parse(NAME).getValue());
+        map.put(PARENT, result.parse(PARENT).getValue());
+        map.put(PRIVILEGES, result.parse(PRIVILEGES).getValue());
+        return map;
+    }
+
+    private Integer getFistRoleId(String cookie) {
+        UriComponentsBuilder urlList = getRolesPath()
+                .queryParam("page", "0")
+                .queryParam("size", "100");
+
+        ResponseEntity<Map> response = get(cookie, urlList);
+        return new Result(response).parse( "result", "content", 0, ID).getValue();
+    }
+
+    private UriComponentsBuilder getRolesPath() {
+        return UriComponentsBuilder.fromHttpUrl(createURLWithPort("roles"));
+    }
+
+    private ResponseEntity<Map> get(String cookie, UriComponentsBuilder urlList) {
+        HttpEntity<Map> entity = new HttpEntity<>(getHeaders(cookie));
+        return restTemplate.exchange(
+                urlList.toUriString(),
+                HttpMethod.GET, entity, Map.class);
+    }
+
+    private ResponseEntity<Map> put(String cookie, UriComponentsBuilder urlList, Map body) {
+        HttpEntity<Map> entity = new HttpEntity<>(body, getHeaders(cookie));
+        return restTemplate.exchange(
+                urlList.toUriString(),
+                HttpMethod.PUT, entity, Map.class);
+    }
+
+
+    static class Result {
+        Object result;
+
+        public Result(Object result) {
+            this.result = result;
+        }
+
+        Result(ResponseEntity response) {
+            this.result = response.getBody();
+        }
+        Result parse(Object... args) {
+            Object res = result;
+            for (Object arg : args) {
+                if (res instanceof Map) {
+                    res = ((Map) res).get(arg);
+                } else if (res instanceof List) {
+                    res = ((List) res).get((int) arg);
+                } else {
+                    throw new IllegalStateException();
+                }
+            }
+            return new Result(res);
+        }
+
+
+        @SuppressWarnings("unchecked")
+        <T> T getValue(){
+            return (T) result;
+        }
+
+    }
+
+
+
+
 
     private Map<String, String> createRequest(String... args) {
         int counter = 1;

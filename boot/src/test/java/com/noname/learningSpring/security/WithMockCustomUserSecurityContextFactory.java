@@ -25,7 +25,7 @@ public class WithMockCustomUserSecurityContextFactory implements WithSecurityCon
 
     @Override
     public SecurityContext createSecurityContext(WithMockCustomUser withMockCustomUser) {
-        final Optional<Account> account = ctx.getAccountRepository().findByUserName(withMockCustomUser.username());
+        final Optional<Account> account = ctx.getAccountRepository().findByName(withMockCustomUser.username());
         final CustomUserDetails principal;
         if (account.isPresent()) {
             ctx.getAccountRepository().delete(account.get());

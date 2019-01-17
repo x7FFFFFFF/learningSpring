@@ -5,7 +5,7 @@ import java.util.Collection;
 
 @Entity
 @Table(name = "Accounts")
-public class Account {
+public class Account implements IEntity<Account>{
     @Id
     @GeneratedValue(strategy=GenerationType.AUTO)
     private Long id;
@@ -13,7 +13,7 @@ public class Account {
 
 
     @Column(name = "User_Name", length = 20, nullable = false)
-    private String userName;
+    private String name;
 
     @Column(name = "Encryted_Password", length = 128, nullable = false)
     private String encrytedPassword;
@@ -35,7 +35,7 @@ public class Account {
     }
 
     public Account(String userName, String encrytedPassword, boolean active,  Collection<Role> roles) {
-        this.userName = userName;
+        this.name = userName;
         this.encrytedPassword = encrytedPassword;
         this.active = active;
         this.roles = roles;
@@ -49,12 +49,17 @@ public class Account {
         this.id = id;
     }
 
-    public String getUserName() {
-        return userName;
+    public String getName() {
+        return name;
     }
 
-    public void setUserName(String userName) {
-        this.userName = userName;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    @Override
+    public EntityReference<Account> toReference() {
+        return new EntityReference<>(id, name, Account.class);
     }
 
     public String getEncrytedPassword() {
@@ -85,7 +90,7 @@ public class Account {
     public String toString() {
         return "Account{" +
                 "id=" + id +
-                ", userName='" + userName + '\'' +
+                ", name='" + name + '\'' +
                 ", encrytedPassword='" + encrytedPassword + '\'' +
                 ", active=" + active +
                 ", roles=" + roles +
