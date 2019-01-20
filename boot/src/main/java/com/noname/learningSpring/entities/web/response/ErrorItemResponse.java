@@ -12,7 +12,7 @@ public class ErrorItemResponse {
     }
 
     public static ErrorItemResponse of(HttpStatus httpStatus){
-        return new ErrorItemResponse(httpStatus.toString(), httpStatus.getReasonPhrase());
+        return new ErrorItemResponse(String.valueOf(httpStatus.value()), httpStatus.getReasonPhrase());
     }
 
     public String getCode() {

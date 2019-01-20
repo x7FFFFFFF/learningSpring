@@ -115,7 +115,7 @@ public class AdminRestControllerTest {
                 HttpMethod.GET, entity, String.class);
         System.out.println("response = " + response);
         Assert.assertEquals(HttpStatus.OK, response.getStatusCode());
-        JSONAssert.assertEquals("{\"result\":{\"content\":[{\"name\":\"ROLE_ANONYMOUS\",\"parent\":null,\"privileges\":[\"GET /*/\"]},{\"name\":\"ROLE_MANAGER\",\"parent\":null,\"privileges\":[\"GET /*\",\"GET /admin/*\",\"GET /api/v1/**\",\"#*\"]}],\"pageable\":{\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true},\"pageSize\":100,\"pageNumber\":0,\"offset\":0,\"paged\":true,\"unpaged\":false},\"totalPages\":1,\"totalElements\":2,\"last\":true,\"first\":true,\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true},\"numberOfElements\":2,\"size\":100,\"number\":0,\"empty\":false},\"errors\":[]}"
+        JSONAssert.assertEquals("{\"result\":{\"content\":[{\"id\":2,\"name\":\"ROLE_ANONYMOUS\",\"parent\":null,\"privileges\":[{\"id\":1,\"name\":\"GET /*/\",\"type\":\"com.noname.learningSpring.entities.Privilege\"}]},{\"id\":8,\"name\":\"ROLE_MANAGER\",\"parent\":null,\"privileges\":[{\"id\":4,\"name\":\"GET /*\",\"type\":\"com.noname.learningSpring.entities.Privilege\"},{\"id\":5,\"name\":\"GET /admin/*\",\"type\":\"com.noname.learningSpring.entities.Privilege\"},{\"id\":6,\"name\":\"GET /api/v1/**\",\"type\":\"com.noname.learningSpring.entities.Privilege\"},{\"id\":7,\"name\":\"#*\",\"type\":\"com.noname.learningSpring.entities.Privilege\"}]}],\"pageable\":{\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true},\"offset\":0,\"pageSize\":100,\"pageNumber\":0,\"paged\":true,\"unpaged\":false},\"totalElements\":2,\"last\":true,\"totalPages\":1,\"size\":100,\"number\":0,\"sort\":{\"sorted\":false,\"unsorted\":true,\"empty\":true},\"numberOfElements\":2,\"first\":true,\"empty\":false},\"errors\":[]}"
                 , response.getBody(), JSONCompareMode.LENIENT);
 
     }
@@ -139,14 +139,47 @@ public class AdminRestControllerTest {
         ResponseEntity<Map> responseGet2 = get(cookie, urlGet);
         Map<String, Object> roleChanged = getRole(responseGet2);
         Assert.assertEquals("ROLE_TEST", roleChanged.get(NAME));
+    }
 
 
-
+    @Test
+    @WithMockCustomUser(username = "manager1", password = "123", role = "ROLE_MANAGER",
+            priveleges = {"GET /*", "GET /admin/*", "GET /api/v1/**",  "PUT /api/v1/**", "POST /api/v1/**", "#*"})
+    public void testGetRoleById(){
+        final String cookie = login("manager1", "123");
+        Integer id = getFistRoleId(cookie);
+        UriComponentsBuilder urlGet = getRolesPath()
+                .pathSegment(id.toString());
+        ResponseEntity<Map> responseGet = get(cookie, urlGet);
+        Map<String, Object> role = getRole(responseGet);
+        role.put(NAME, "ROLE_TEST");
+        ResponseEntity<Map> responsePut = put(cookie, urlGet, role);
+        System.out.println("responsePut = " + responsePut);
+        ResponseEntity<Map> responseGet2 = get(cookie, urlGet);
+        Map<String, Object> roleChanged = getRole(responseGet2);
+        Assert.assertEquals("ROLE_TEST", roleChanged.get(NAME));
 
 
 
 
     }
+
+    @Test
+    @WithMockCustomUser(username = "manager1", password = "123", role = "ROLE_MANAGER",
+            priveleges = {"GET /*", "GET /admin/*", "GET /api/v1/**",  "PUT /api/v1/**", "POST /api/v1/**", "#*"})
+    public void testEdit() {
+        final String cookie = login("manager1", "123");
+        Map<String, Object> map = new HashMap<>();
+        map.put(ID, "1");
+        map.put(NAME, "2");
+        map.put(PARENT, "null");
+        map.put(PRIVILEGES, "");
+        ResponseEntity<Map> responsePut = put(cookie, urlGet, role);
+
+
+    }
+
+
 
     private Map<String, Object> getRole(ResponseEntity<Map> responseGet) {
         final Result result = new Result(responseGet).parse("result");

@@ -15,6 +15,7 @@ import org.springframework.security.config.annotation.web.configuration.WebSecur
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.security.web.access.AccessDeniedHandler;
 import org.springframework.security.web.csrf.CookieCsrfTokenRepository;
 
 @Configuration
@@ -33,6 +34,9 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Autowired
     private Constants constants;
+
+    @Autowired
+    private AccessDeniedHandler accessDeniedHandler;
 
 
     @Override
@@ -78,7 +82,7 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .and().anonymous().principal(userDetailsService.loadUserByUsername(ANONYMOUS_USER_NAME));
 
 
-        http.authorizeRequests().and().exceptionHandling().accessDeniedPage("/403");
+        http.authorizeRequests().and().exceptionHandling().accessDeniedHandler(accessDeniedHandler);
 
 
         http.authorizeRequests()
